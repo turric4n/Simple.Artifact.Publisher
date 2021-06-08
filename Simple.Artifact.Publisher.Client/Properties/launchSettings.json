@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Simple.Artifact.Publisher.Client": {
+      "commandName": "Project",
+      "commandLineArgs": "-a \"Publish\" -e \"http://walker.habitatsoft.com:5002\" -f \"F:\\Descargas\\36869.zip\" -t \"D:\\DOMINIOS\\pisos_test\""
+    }
+  }
+}
