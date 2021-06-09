@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.FileProviders;
+using QuickLogger.Extensions.NetCore;
 
 namespace Simple.Artifact.Publisher
 {
@@ -26,6 +27,8 @@ namespace Simple.Artifact.Publisher
             services.AddControllersWithViews();
             var physicalProvider = new PhysicalFileProvider(Configuration.GetValue<string>("StoredFilesPath"));
             services.AddSingleton<IFileProvider>(physicalProvider);
+
+            services.AddQuickLogger();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

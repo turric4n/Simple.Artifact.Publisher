@@ -119,7 +119,13 @@ namespace Simple.Artifact.Publisher.Controllers
                     // read the headers for the next section.
                     section = await reader.ReadNextSectionAsync();
                 }
+
                 return Created(nameof(UploadController), trustedFileNameForFileStorage);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("Error while uploading artifact", ex.Message);
+                throw;
             }
             finally
             {

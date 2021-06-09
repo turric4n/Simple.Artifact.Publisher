@@ -15,13 +15,15 @@ namespace Simple.Artifact.Publisher.Client
 {
     class Program
     {
-        static private string BaseEndpoint;
-        static private string UploadEndpoint = "/upload/UploadArtifact";
-        static private string ProcessEndpoint = "/process/ProcessStart";
-        static private string PublishEndpoint = "/publish/PublishArtifact";
+        private static string BaseEndpoint;
+        private static string UploadEndpoint = "/upload/UploadArtifact";
+        private static string ProcessEndpoint = "/process/ProcessStart";
+        private static string PublishEndpoint = "/publish/PublishArtifact";
+        private static string RemoveEndpoint = "/publish/RemoveArtifact";
+
         public static async Task<string> UploadFile(string filePath)
         {
-            var httpClient = new HttpClient();
+            using var httpClient = new HttpClient();
             httpClient.Timeout = TimeSpan.FromMinutes(10);
             httpClient.BaseAddress = new Uri(BaseEndpoint);
             if (string.IsNullOrWhiteSpace(filePath))
@@ -67,6 +69,16 @@ namespace Simple.Artifact.Publisher.Client
         }
 
 
+        public static async Task RemoveArtifact(string filename)
+        {
+            using var httpClient = new HttpClient();
+            httpClient.Timeout = TimeSpan.FromMinutes(10);
+            httpClient.BaseAddress = new Uri(BaseEndpoint);
+
+            var response = await httpClient.DeleteAsync($"{RemoveEndpoint}?artifactname={filename}");
+
+            response.EnsureSuccessStatusCode();
+        }
 
         public static async Task StartProcess(string processPath, string parameters)
         {
@@ -99,6 +111,7 @@ namespace Simple.Artifact.Publisher.Client
                         case Action.Publish:
                             var uploadResult = UploadFile(o.FileName).Result;
                             PublishFile(uploadResult, o.TargetFolder).Wait();
+                            RemoveArtifact(uploadResult).Wait();
                             break;
                         case Action.Process:
                             StartProcess(o.ProcessPath, o.ProcessParameters).Wait();
