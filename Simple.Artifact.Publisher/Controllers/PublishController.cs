@@ -13,7 +13,7 @@ namespace Simple.Artifact.Publisher.Controllers
 {
     public class PublishController : Controller
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<PublishController> _logger;
         private readonly string _srcFilePath;
 
         public PublishController(IConfiguration config, ILogger<PublishController> logger)

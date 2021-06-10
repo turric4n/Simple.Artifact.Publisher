@@ -47,7 +47,7 @@ namespace Simple.Artifact.Publisher.Client
             return responseContent;
         }
 
-        public static async Task PublishFile(string filename, string targetpath)
+        public static async Task PublishFile(string filename, string targetpath, bool cleanup)
         {
             using var httpClient = new HttpClient();
             httpClient.Timeout = TimeSpan.FromMinutes(10);
@@ -56,7 +56,7 @@ namespace Simple.Artifact.Publisher.Client
             var publish = new PublishJob()
             {
                 Target = targetpath,
-                Cleanup = true,
+                Cleanup = cleanup,
                 File = filename
             };
             var publishjob = JsonConvert.SerializeObject(publish);
@@ -110,7 +110,7 @@ namespace Simple.Artifact.Publisher.Client
                     {
                         case Action.Publish:
                             var uploadResult = UploadFile(o.FileName).Result;
-                            PublishFile(uploadResult, o.TargetFolder).Wait();
+                            PublishFile(uploadResult, o.TargetFolder, o.Cleanup).Wait();
                             RemoveArtifact(uploadResult).Wait();
                             break;
                         case Action.Process:

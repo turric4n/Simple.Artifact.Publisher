@@ -21,5 +21,7 @@ namespace Simple.Artifact.Publisher.Client
         public string FileName { get; set; }
         [Option('t', "target", Required = false, HelpText = "Target to publish")]
         public string TargetFolder { get; set; }
+        [Option('c', "cleanup", Required = false, HelpText = "Cleanup target location")]
+        public bool Cleanup { get; set; }
     }
 }
