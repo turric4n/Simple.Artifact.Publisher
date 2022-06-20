@@ -1,15 +1,11 @@
-﻿using System;
-using System.Globalization;
+﻿using CommandLine;
+using Newtonsoft.Json;
+using System;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Reflection.Metadata;
 using System.Text;
-using System.Text.Json;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using CommandLine;
-using Newtonsoft.Json;
 
 namespace Simple.Artifact.Publisher.Client
 {
@@ -20,6 +16,7 @@ namespace Simple.Artifact.Publisher.Client
         private static string ProcessEndpoint = "/process/ProcessStart";
         private static string PublishEndpoint = "/publish/PublishArtifact";
         private static string RemoveEndpoint = "/publish/RemoveArtifact";
+        private static string KillProcessByUsername = "/process/ProcessStopByUser";
 
         public static async Task<string> UploadFile(string filePath)
         {
@@ -100,6 +97,27 @@ namespace Simple.Artifact.Publisher.Client
             response.EnsureSuccessStatusCode();
         }
 
+        public static async Task StopProcessByUsername(string processName, string processUsername)
+        {
+            using var httpClient = new HttpClient();
+            httpClient.Timeout = TimeSpan.FromMinutes(10);
+            httpClient.BaseAddress = new Uri(BaseEndpoint);
+
+            var process = new ProcessUsername()
+            {
+                ProcessName = processName,
+                ProcessUser = processUsername
+            };
+
+            var processjob = JsonConvert.SerializeObject(process);
+
+            var jsoncontent = new StringContent(processjob, Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PostAsync($"{KillProcessByUsername}", jsoncontent);
+
+            response.EnsureSuccessStatusCode();
+        }
+
         static void Main(string[] args)
         {
             Parser.Default.ParseArguments<Parameters>(args)
@@ -115,6 +133,9 @@ namespace Simple.Artifact.Publisher.Client
                             break;
                         case Action.Process:
                             StartProcess(o.ProcessPath, o.ProcessParameters).Wait();
+                            break;
+                        case Action.KillProcess:
+                            StopProcessByUsername(o.ProcessNameToKill, o.ProcessUsernameToKill).Wait();
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();

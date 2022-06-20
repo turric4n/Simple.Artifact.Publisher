@@ -17,6 +17,13 @@ namespace Simple.Artifact.Publisher.Client
         public string ProcessPath { get; set; }
         [Option('p', "parameters", Required = false, HelpText = "Parameters")]
         public string ProcessParameters { get; set; }
+
+        [Option('k', "kill", Required = false, HelpText = "Process to kill")]
+        public string ProcessNameToKill { get; set; }
+
+        [Option('u', "username", Required = false, HelpText = "Username of the process to kill")]
+        public string ProcessUsernameToKill { get; set; }
+
         [Option('f', "filename", Required = false, HelpText = "Filename to publish")]
         public string FileName { get; set; }
         [Option('t', "target", Required = false, HelpText = "Target to publish")]

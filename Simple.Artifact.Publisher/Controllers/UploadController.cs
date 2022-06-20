@@ -39,6 +39,7 @@ namespace Simple.Artifact.Publisher.Controllers
         {
             try
             {
+                _logger.LogInformation($"Uploading artifact.");
                 if (!MultipartRequestHelper.IsMultipartContentType(Request.ContentType))
                 {
                     ModelState.AddModelError("File",
